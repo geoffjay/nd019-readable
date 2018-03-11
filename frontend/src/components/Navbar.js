@@ -5,7 +5,9 @@ import AppBar from 'material-ui/AppBar'
 import Toolbar from 'material-ui/Toolbar'
 import Typography from 'material-ui/Typography'
 import IconButton from 'material-ui/IconButton'
+import Button from 'material-ui/Button'
 import MenuIcon from 'material-ui-icons/Menu'
+import ExpandIcon from 'material-ui-icons/ExpandMore'
 import Sidebar from './Sidebar'
 
 const styles = {
@@ -17,18 +19,23 @@ const styles = {
   },
   menuButton: {
     marginLeft: -12,
-    marginRight: 20,
+    marginRight: 12,
   },
 }
 
 class Navbar extends Component {
+
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+  }
+
   state = {
-    opened: false,
+    sidebarOpen: false,
   }
 
   toggleSidebar = (open) => () => {
     this.setState({
-      opened: open,
+      sidebarOpen: open,
     })
   }
 
@@ -50,20 +57,19 @@ class Navbar extends Component {
             <Typography variant="title" color="inherit" className={classes.flex}>
               Readable
             </Typography>
+            <Button color="inherit">
+              Sort by
+              <ExpandIcon />
+            </Button>
           </Toolbar>
         </AppBar>
         <Sidebar
-          open={this.state.opened}
+          open={this.state.sidebarOpen}
           toggleSidebar={this.toggleSidebar}
         />
       </div>
     )
   }
-}
-
-Navbar.propTypes = {
-  classes: PropTypes.object.isRequired,
-  // categories: PropTypes.array.isRequired,
 }
 
 export default withStyles(styles)(Navbar)

@@ -2,8 +2,7 @@ import React from 'react'
 import Navbar from './Navbar'
 import PostList from './PostList'
 
-const Main = (props) => {
-
+const Home = (props) => {
   return (
     <div>
       <Navbar />
@@ -12,4 +11,4 @@ const Main = (props) => {
   )
 }
 
-export default Main
+export default Home
