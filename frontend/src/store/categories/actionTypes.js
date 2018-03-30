@@ -1,0 +1,1 @@
+export const CATEGORIES_FETCHED = 'categories.CATEGORIES_FETCHED'

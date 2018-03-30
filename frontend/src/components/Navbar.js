@@ -8,7 +8,6 @@ import IconButton from 'material-ui/IconButton'
 import Button from 'material-ui/Button'
 import MenuIcon from 'material-ui-icons/Menu'
 import ExpandIcon from 'material-ui-icons/ExpandMore'
-import Sidebar from './Sidebar'
 
 const styles = {
   root: {
@@ -23,24 +22,16 @@ const styles = {
   },
 }
 
+// TODO: Change to stateless functional component
 class Navbar extends Component {
 
   static propTypes = {
     classes: PropTypes.object.isRequired,
-  }
-
-  state = {
-    sidebarOpen: false,
-  }
-
-  toggleSidebar = (open) => () => {
-    this.setState({
-      sidebarOpen: open,
-    })
+    toggleSidebar: PropTypes.func.isRequired,
   }
 
   render() {
-    const { classes } = this.props
+    const { classes, toggleSidebar } = this.props
 
     return (
       <div className={classes.root}>
@@ -50,7 +41,7 @@ class Navbar extends Component {
               className={classes.menuButton}
               color="inherit"
               aria-label="Menu"
-              onClick={this.toggleSidebar(true)}
+              onClick={toggleSidebar(true)}
             >
               <MenuIcon />
             </IconButton>
@@ -63,10 +54,6 @@ class Navbar extends Component {
             </Button>
           </Toolbar>
         </AppBar>
-        <Sidebar
-          open={this.state.sidebarOpen}
-          toggleSidebar={this.toggleSidebar}
-        />
       </div>
     )
   }

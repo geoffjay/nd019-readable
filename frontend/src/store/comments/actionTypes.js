@@ -1,0 +1,5 @@
+export const CREATE_COMMENT = 'comments.CREATE_COMMENT'
+export const UPDATE_COMMENT = 'comments.UPDATE_COMMENT'
+export const DELETE_COMMENT = 'comments.DELETE_COMMENT'
+export const UPVOTE_COMMENT = 'comments.UPVOTE_COMMENT'
+export const DOWNVOTE_COMMENT = 'comments.DOWNVOTE_COMMENT'

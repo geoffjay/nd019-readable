@@ -1,0 +1,5 @@
+export const CREATE_POST = 'posts.CREATE_POST'
+export const UPDATE_POST = 'posts.UPDATE_POST'
+export const DELETE_POST = 'posts.DELETE_POST'
+export const UPVOTE_POST = 'posts.UPVOTE_POST'
+export const DOWNVOTE_POST = 'posts.DOWNVOTE_POST'

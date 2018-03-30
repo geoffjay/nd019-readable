@@ -16,14 +16,10 @@ const styles = {
 
 const Sidebar = (props) => {
 
-  const { classes, open, toggleSidebar } = props
+  const { classes, open, categories, toggleSidebar } = props
+  console.log(categories)
 
-  const categories = [
-    { id: 'cat1', text: 'Test 1' },
-    { id: 'cat2', text: 'Test 2' },
-    { id: 'cat3', text: 'Test 3' },
-  ]
-
+  //return (<div>hi</div>)
   return (
     <Drawer open={open} onClose={toggleSidebar(false)}>
       <div
@@ -41,14 +37,16 @@ const Sidebar = (props) => {
           </ListItem>
           <Divider />
           <List>
+            {/*
             {categories.map((category) => (
-              <ListItem key={category.id} button>
+              <ListItem key={category.name} button>
                 <ListItemIcon>
                   <LabelOutlineIcon />
                 </ListItemIcon>
-                <ListItemText primary={category.text} />
+                <ListItemText primary={category.path} />
               </ListItem>
             ))}
+            */}
           </List>
         </div>
       </div>
@@ -59,6 +57,7 @@ const Sidebar = (props) => {
 Sidebar.propTypes = {
   classes: PropTypes.object.isRequired,
   open: PropTypes.bool.isRequired,
+  categories: PropTypes.object.isRequired,
   toggleSidebar: PropTypes.func.isRequired,
   // onSelectCategory: PropTypes.func.isRequired,
 }

@@ -1,47 +1,11 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import { withStyles } from 'material-ui/styles'
-import Button from 'material-ui/Button'
-import AddIcon from 'material-ui-icons/Add'
 import PostCard from './PostCard'
-import PostDialog from './PostDialog'
 
-const styles = theme => ({
-  button: {
-    position: 'fixed',
-    right: 25,
-    bottom: 25,
-    margin: theme.spacing.unit,
-  },
-})
-
+// TODO: Convert to stateless functional component
 class PostList extends Component {
 
-  state = {
-    postDialogOpen: false,
-  }
-
-  openPostDialog = () => {
-    this.setState(() => ({
-      postDialogOpen: true,
-    }))
-  }
-
-  closePostDialog = () => {
-    this.setState(() => ({
-      postDialogOpen: false,
-    }))
-  }
-
-  onSubmitPost = () => {
-    console.log('hi')
-    this.closePostDialog()
-  }
-
   render() {
-    const { postDialogOpen } = this.state
-    const { classes } = this.props
-
+    // TODO: Get posts from Redux
     const posts = [
       {
         id: '8xf0y6ziyjabvozdd253nd',
@@ -83,27 +47,9 @@ class PostList extends Component {
         {posts.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}
-        <Button
-          variant="fab"
-          color="secondary"
-          aria-label="add"
-          className={classes.button}
-          onClick={this.openPostDialog}
-        >
-          <AddIcon />
-        </Button>
-        <PostDialog
-          open={postDialogOpen}
-          onCancel={this.closePostDialog}
-          onSubmit={this.onSubmitPost}
-        />
       </div>
     )
   }
 }
 
-PostList.propTypes = {
-  classes: PropTypes.object.isRequired,
-}
-
-export default withStyles(styles)(PostList)
+export default PostList
