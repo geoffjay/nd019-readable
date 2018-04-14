@@ -7,6 +7,7 @@ import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List'
 import Divider from 'material-ui/Divider'
 import ListIcon from 'material-ui-icons/List'
 import LabelOutlineIcon from 'material-ui-icons/LabelOutline'
+import { capitalize } from '../utils/helpers'
 
 const styles = {
   list: {
@@ -14,12 +15,18 @@ const styles = {
   }
 }
 
+const propTypes = {
+  classes: PropTypes.object.isRequired,
+  open: PropTypes.bool.isRequired,
+  categories: PropTypes.object.isRequired,
+  toggleSidebar: PropTypes.func.isRequired,
+  selectCategory: PropTypes.func.isRequired,
+}
+
 const Sidebar = (props) => {
 
-  const { classes, open, categories, toggleSidebar } = props
-  console.log(categories)
+  const { classes, open, categories, toggleSidebar, selectCategory } = props
 
-  //return (<div>hi</div>)
   return (
     <Drawer open={open} onClose={toggleSidebar(false)}>
       <div
@@ -37,16 +44,29 @@ const Sidebar = (props) => {
           </ListItem>
           <Divider />
           <List>
-            {/*
-            {categories.map((category) => (
-              <ListItem key={category.name} button>
+            <ListItem
+              key={'all'}
+              button
+              onClick={selectCategory('all')}
+            >
+              <ListItemIcon>
+                <LabelOutlineIcon />
+              </ListItemIcon>
+              <ListItemText primary={'All'} />
+            </ListItem>
+            <Divider />
+            {categories.data && categories.data.map((category) => (
+              <ListItem
+                key={category.name}
+                button
+                onClick={selectCategory(category.name)}
+              >
                 <ListItemIcon>
                   <LabelOutlineIcon />
                 </ListItemIcon>
-                <ListItemText primary={category.path} />
+                <ListItemText primary={capitalize(category.path)} />
               </ListItem>
             ))}
-            */}
           </List>
         </div>
       </div>
@@ -54,12 +74,6 @@ const Sidebar = (props) => {
   )
 }
 
-Sidebar.propTypes = {
-  classes: PropTypes.object.isRequired,
-  open: PropTypes.bool.isRequired,
-  categories: PropTypes.object.isRequired,
-  toggleSidebar: PropTypes.func.isRequired,
-  // onSelectCategory: PropTypes.func.isRequired,
-}
+Sidebar.propTypes = propTypes
 
 export default withStyles(styles)(Sidebar)

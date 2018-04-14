@@ -32,15 +32,17 @@ const styles = theme => ({
   },
 })
 
+const propTypes = {
+  classes: PropTypes.object.isRequired,
+  open: PropTypes.bool.isRequired,
+  categories: PropTypes.object.isRequired,
+  onCancel: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+}
+
 const PostDialog = (props) => {
 
-  const { classes, open, onSubmit, onCancel } = props
-
-  const categories = [
-    { name: 'react' },
-    { name: 'redux' },
-    { name: 'udacity' },
-  ]
+  const { classes, open, categories, onSubmit, onCancel } = props
 
   return (
     <Dialog
@@ -78,7 +80,7 @@ const PostDialog = (props) => {
           select
           label="Category"
           className={classes.menuField}
-          value={categories[0].name}
+          value={categories.data && categories.data[0].name}
           SelectProps={{
             native: true,
             MenuProps: {
@@ -87,7 +89,7 @@ const PostDialog = (props) => {
           }}
           helperText="Select a category"
         >
-          {categories.map(option => (
+          {categories.data && categories.data.map(option => (
             <option key={option.name} value={option.name}>
               {option.name}
             </option>
@@ -117,11 +119,6 @@ const PostDialog = (props) => {
   )
 }
 
-PostDialog.propTypes = {
-  classes: PropTypes.object.isRequired,
-  open: PropTypes.bool.isRequired,
-  onCancel: PropTypes.func.isRequired,
-  onSubmit: PropTypes.func.isRequired,
-}
+PostDialog.propTypes = propTypes
 
 export default withStyles(styles)(PostDialog)

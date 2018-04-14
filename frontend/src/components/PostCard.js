@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { Link, withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
-import { Link } from 'react-router-dom'
 import { withStyles } from 'material-ui/styles'
 import Card, {
   CardHeader,
@@ -16,6 +17,7 @@ import ArrowUpwardIcon from 'material-ui-icons/ArrowUpward'
 import ArrowDownwardIcon from 'material-ui-icons/ArrowDownward'
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore'
 import MoreVertIcon from 'material-ui-icons/MoreVert'
+import { upvotePost, downvotePost } from '../store/posts/actions'
 
 const styles = theme => ({
   card: {
@@ -44,6 +46,10 @@ const styles = theme => ({
   },
 })
 
+const propTypes = {
+  classes: PropTypes.object.isRequired,
+}
+
 class PostCard extends Component {
 
   state = {
@@ -55,7 +61,7 @@ class PostCard extends Component {
   }
 
   render() {
-    const { classes, post } = this.props
+    const { classes, post, upvote, downvote } = this.props
 
     const dateTime = new Date(post.timestamp)
     const date = dateTime.toDateString()
@@ -88,22 +94,28 @@ class PostCard extends Component {
             </Typography>
           </CardContent>
           <CardActions className={classes.actions} disableActionSpacing>
-            <IconButton aria-label="Vote down">
+            <IconButton
+              aria-label="Vote down"
+              onClick={(post) => downvote({ post: this.props.post })}
+            >
               <ArrowDownwardIcon />
             </IconButton>
             <Typography component="p">
               {post.voteScore}
             </Typography>
-            <IconButton aria-label="Vote up">
+            <IconButton
+              aria-label="Vote up"
+              onClick={(post) => upvote({ post: this.props.post })}
+            >
               <ArrowUpwardIcon />
             </IconButton>
             <IconButton
               className={classnames(classes.expand, {
                 [classes.expandOpen]: this.state.expanded,
               })}
-              onClick={this.handleExpandClick}
               aria-expanded={this.state.expanded}
               aria-label="Show more"
+              onClick={this.handleExpandClick}
             >
               <ExpandMoreIcon />
             </IconButton>
@@ -127,8 +139,18 @@ class PostCard extends Component {
   }
 }
 
-PostCard.propTypes = {
-  classes: PropTypes.object.isRequired,
-}
+PostCard.propTypes = propTypes
 
-export default withStyles(styles)(PostCard)
+const mapStateToProps = state => ({
+  //post: state.post,
+})
+
+const mapDispatchToProps = dispatch => ({
+  upvote: (post) => dispatch(upvotePost(post)),
+  downvote: (post) => dispatch(downvotePost(post)),
+})
+
+export default withRouter(connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(PostCard)))

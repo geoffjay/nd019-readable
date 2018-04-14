@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import { withStyles } from 'material-ui/styles'
 import AppBar from 'material-ui/AppBar'
@@ -22,41 +22,44 @@ const styles = {
   },
 }
 
-// TODO: Change to stateless functional component
-class Navbar extends Component {
-
-  static propTypes = {
-    classes: PropTypes.object.isRequired,
-    toggleSidebar: PropTypes.func.isRequired,
-  }
-
-  render() {
-    const { classes, toggleSidebar } = this.props
-
-    return (
-      <div className={classes.root}>
-        <AppBar position="static">
-          <Toolbar>
-            <IconButton
-              className={classes.menuButton}
-              color="inherit"
-              aria-label="Menu"
-              onClick={toggleSidebar(true)}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="title" color="inherit" className={classes.flex}>
-              Readable
-            </Typography>
-            <Button color="inherit">
-              Sort by
-              <ExpandIcon />
-            </Button>
-          </Toolbar>
-        </AppBar>
-      </div>
-    )
-  }
+const propTypes = {
+  classes: PropTypes.object.isRequired,
+  toggleSidebar: PropTypes.func.isRequired,
 }
+
+const Navbar = (props) => {
+
+  const { classes, toggleSidebar } = props
+
+  return (
+    <div className={classes.root}>
+      <AppBar position="static">
+        <Toolbar>
+          <IconButton
+            className={classes.menuButton}
+            color="inherit"
+            aria-label="Menu"
+            onClick={toggleSidebar(true)}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography
+            variant="title"
+            color="inherit"
+            className={classes.flex}
+          >
+            Readable
+          </Typography>
+          <Button color="inherit">
+            Sort by
+            <ExpandIcon />
+          </Button>
+        </Toolbar>
+      </AppBar>
+    </div>
+  )
+}
+
+Navbar.propTypes = propTypes
 
 export default withStyles(styles)(Navbar)

@@ -1,55 +1,60 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
+import PropTypes from 'prop-types'
 import PostCard from './PostCard'
+import { fetchPosts, fetchPostsByCategory } from '../store/posts/actions'
 
-// TODO: Convert to stateless functional component
+const propTypes = {
+  category: PropTypes.string.isRequired,
+}
+
 class PostList extends Component {
 
-  render() {
-    // TODO: Get posts from Redux
-    const posts = [
-      {
-        id: '8xf0y6ziyjabvozdd253nd',
-        timestamp: 1467166872634,
-        title: 'Udacity is the best place to learn React',
-        body: 'Everyone says so after all.',
-        author: 'thingtwo',
-        category: 'react',
-        voteScore: 6,
-        deleted: false,
-        commentCount: 2
-      },
-      {
-        id: '6ni6ok3ym7mf1p33lnez',
-        timestamp: 1468479767190,
-        title: 'Learn Redux in 10 minutes!',
-        body: 'Just kidding. It takes more than 10 minutes to learn technology.',
-        author: 'thingone',
-        category: 'redux',
-        voteScore: -5,
-        deleted: false,
-        commentCount: 0
-      },
-      {
-        id: '1z2daa5ym7nfpo332neq',
-        timestamp: 1468479763123,
-        title: 'Do stuff',
-        body: 'Suck it trebek.',
-        author: 'fergturd',
-        category: 'udacity',
-        voteScore: 1,
-        deleted: false,
-        commentCount: 0
+  state = {
+    category: 'all'
+  }
+
+  componentDidMount() {
+    this.props.loadPosts()
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.category !== this.state.category) {
+      this.setState({ category: nextProps.category })
+      if (nextProps.category === 'all') {
+        this.props.loadPosts()
+      } else {
+        this.props.loadPostsByCategory(nextProps.category)
       }
-    ]
+    }
+  }
+
+  render() {
+    const { posts } = this.props
 
     return (
       <div>
-        {posts.map((post) => (
-          <PostCard key={post.id} post={post} />
-        ))}
+        {posts && Object.keys(posts).map(function(key) {
+          return <PostCard key={key} post={posts[key]} />
+        })}
       </div>
     )
   }
 }
 
-export default PostList
+PostList.propTypes = propTypes
+
+const mapStateToProps = state => ({
+  posts: state.posts.postsById,
+})
+
+const mapDispatchToProps = dispatch => ({
+  loadPosts: () => dispatch(fetchPosts()),
+  loadPostsByCategory: (category) => dispatch(fetchPostsByCategory(category)),
+})
+
+export default withRouter(connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PostList))
