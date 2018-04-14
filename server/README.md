@@ -2,8 +2,8 @@
 
 To install and start the API server, run the following commands in this directory:
 
-* `npm install`
-* `node server`
+* `yarn install`
+* `yarn start`
 
 ## Using The Server
 
@@ -21,7 +21,11 @@ fetch(
 ```
 
 ### Comment Counts
-Posts retrieved in a list or individually now contain comment counts in the format `post: { commentCount: 0 }`.  This should make it easier to display the number of comments a post has without having to call the comments endpoint for each post.   This count is updated whenever a comment is added or deleted via the `POST /comments` or `DELETE /comments/:id` endpoints.
+
+Posts retrieved in a list or individually now contain comment counts in the format `post: { commentCount: 0 }`.  This
+should make it easier to display the number of comments a post has without having to call the comments endpoint for each
+post. This count is updated whenever a comment is added or deleted via the `POST /comments` or `DELETE /comments/:id`
+endpoints.
 
 ### API Endpoint
 

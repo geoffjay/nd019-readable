@@ -1,23 +1,47 @@
-# Readable API Server
+# Readable
 
-This is the starter project for the final assessment project for Udacity's Redux course where you will build a content and comment web app. Users will be able to post content to predefined categories, comment on their posts and other users' posts, and vote on posts and comments. Users will also be able to edit and delete posts and comments.
+Readable is a _Reddit_-style posting app that allows you to add/modify/delete posts and associated comments. Posts are
+categorized and can be filtered and ordered based on information retrieved from a backend API server.
+React and Redux are used to build the application, with book data being retrieved from a Node.js API server using
+`express` to handle the REST calls.
 
-This repository includes the code for the backend API Server that you'll use to develop and interact with the front-end portion of the project.
+## Get Started
 
-## Start Developing
-
-To get started developing right away:
-
-* Install and start the API server
-    - `cd server`
-    - `yarn install`
-    - `node server`
-* In another terminal window, use Create React App to scaffold out the front-end
-    - `create-react-app frontend`
-    - `cd frontend`
-    - `yarn install`
-    - `yarn start`
+To get started clone this repository and follow the server and frontend installation and usage sections.
 
 ## API Server
 
-Information about the API server and how to use it can be found in its [README file](api-server/README.md).
+Additional information about the API server and how to use it can be found in its [README](server/README.md) file.
+
+### Installation and Usage
+
+With a terminal opened to the location this repository was cloned in execute these commands to install the project
+dependencies, and start the server listening.
+
+```sh
+cd readable/server
+yarn install
+yarn start
+```
+
+The server will start listening for REST calls at the address `http://localhost:3001`. A simple test to ensure this is
+working uses `cURL`.
+
+```sh
+curl -X GET -H 'authorization:anonymous' http://localhost:3001/posts
+```
+
+## React/Redux Frontend
+
+Additional information about the frontend and how to use it can be found in its [README](frontend/README.md) file.
+
+### Installation and Usage
+
+In another terminal opened to the location this repository was cloned in execute these commands to install the frontend
+project dependencies, and start the server hosting the React pages using `react-scripts`.
+
+```sh
+cd readable/frontend
+yarn install
+yarn start
+```
