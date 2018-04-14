@@ -1,10 +1,6 @@
-import * as types from './actionTypes'
+import * as types from './types'
 
-const initialState = {
-  categoriesByName: undefined
-}
-
-const categories = (state = initialState, action) => {
+const categories = (state = {}, action) => {
   switch (action.type) {
   case types.CATEGORIES_FETCHED:
     return {

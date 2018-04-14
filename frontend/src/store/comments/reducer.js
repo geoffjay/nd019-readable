@@ -1,10 +1,16 @@
-import * as types from './actionTypes'
+import * as types from './types'
 
 const comments = (state = [], action) => {
   const { post, comment } = action
 
   switch (action.type) {
-  case types.CREATE_COMMENT:
+  case types.COMMENTS_FETCHED_BY_POST:
+    // TODO: Decide how to load comments, this doesn't feel right
+    return {
+      ...state,
+      commentsByPost: action.commentsByPost
+    }
+  case types.COMMENTS_CREATE:
     return {
       ...state,
       [comment.id]: comment,
@@ -18,7 +24,7 @@ const comments = (state = [], action) => {
         commentCount: post.commentCount + 1
       }
     }
-  case types.UPDATE_COMMENT:
+  case types.COMMENTS_UPDATE:
     return {
       ...state,
       [comment.id]: {
@@ -27,7 +33,7 @@ const comments = (state = [], action) => {
         body: comment.body
       }
     }
-  case types.DELETE_COMMENT:
+  case types.COMMENTS_DELETE:
     return {
       ...state,
       [comment.id]: {
@@ -35,7 +41,7 @@ const comments = (state = [], action) => {
         deleted: true
       }
     }
-  case types.UPVOTE_COMMENT:
+  case types.COMMENTS_UPVOTE:
     return {
       ...state,
       [comment.id]: {
@@ -43,7 +49,7 @@ const comments = (state = [], action) => {
         voteScore: comment.voteScore + 1
       }
     }
-  case types.DOWNVOTE_COMMENT:
+  case types.COMMENTS_DOWNVOTE:
     return {
       ...state,
       [comment.id]: {

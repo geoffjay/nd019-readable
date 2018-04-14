@@ -1,47 +1,72 @@
-import * as types from './actionTypes'
+import * as types from './types'
 
-const posts = (state = [], action) => {
+const posts = (state = {}, action) => {
   const { post } = action
 
   switch (action.type) {
-  case types.CREATE_POST:
+  case types.POSTS_FETCHED:
     return {
       ...state,
-      [post.id]: post
+      postsById: action.postsById
     }
-  case types.UPDATE_POST:
+  case types.POSTS_FETCHED_BY_CATEGORY:
     return {
       ...state,
-      [post.id]: {
-        ...state[post.id],
-        title: post.title,
-        body: post.body
+      postsById: action.postsById
+    }
+  case types.POSTS_CREATE:
+    return {
+      ...state,
+      postsById: {
+        ...state.postsById,
+        [post.id]: post
       }
     }
-  case types.DELETE_POST:
+  case types.POSTS_UPDATE:
     return {
       ...state,
-      [post.id]: {
-        ...state[post.id],
-        deleted: true
+      postsById: {
+        ...state.postsById,
+        [post.id]: {
+          ...state.postsById[post.id],
+          title: post.title,
+          body: post.body
+        }
+      }
+    }
+  case types.POSTS_DELETE:
+    return {
+      ...state,
+      postsById: {
+        ...state.postsById,
+        [post.id]: {
+          ...state.postsById[post.id],
+          deleted: true
+        }
       }
       // for (comment of(?) state.comments) { comment.parentDeleted = true }
     }
-  case types.UPVOTE_POST:
+  case types.POSTS_UPVOTE:
     return {
       ...state,
-      [post.id]: {
-        ...state[post.id],
-        voteScore: post.voteScore + 1
-      }
+      postsById: {
+        ...state.postsById,
+        [post.id]: {
+          ...state.postsById[post.id],
+          voteScore: post.voteScore
+        }
+      },
     }
-  case types.DOWNVOTE_POST:
+  case types.POSTS_DOWNVOTE:
     return {
       ...state,
-      [post.id]: {
-        ...state[post.id],
-        voteScore: post.voteScore - 1
-      }
+      postsById: {
+        ...state.postsById,
+        [post.id]: {
+          ...state.postsById[post.id],
+          voteScore: post.voteScore
+        }
+      },
     }
   default:
     return state
