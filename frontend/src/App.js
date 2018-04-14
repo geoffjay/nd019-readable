@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Switch, Route } from 'react-router-dom'
+import { Switch, Route, withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles'
 import blueGrey from 'material-ui/colors/blueGrey'
@@ -48,7 +48,7 @@ class App extends Component {
         <div className="app">
           <Switch>
             <Route exact path="/" component={Home} />
-            <Route exact path="/posts/:id" component={Post} />
+            <Route path="/posts/:id" component={Post} />
             <Route component={NoMatch} />
           </Switch>
         </div>
@@ -81,7 +81,7 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-export default connect(
+export default withRouter(connect(
   mapStateToProps,
   mapDispatchToProps
-)(App)
+)(App))

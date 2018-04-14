@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 import { withStyles } from 'material-ui/styles'
 import Button from 'material-ui/Button'
 import AddIcon from 'material-ui-icons/Add'
@@ -8,6 +9,7 @@ import Sidebar from '../components/Sidebar'
 import PostList from '../components/PostList'
 import PostDialog from '../components/PostDialog'
 import { fetchCategories } from '../store/categories/actions'
+import { createPost } from '../store/posts/actions'
 
 const styles = theme => ({
   button: {
@@ -21,13 +23,24 @@ const styles = theme => ({
 class Home extends Component {
 
   state = {
+    selectedCategory: 'all',
     sidebarOpen: false,
     postDialogOpen: false,
+  }
+
+  componentDidMount() {
+    this.props.loadCategories()
   }
 
   toggleSidebar = (open) => () => {
     this.setState({
       sidebarOpen: open,
+    })
+  }
+
+  selectCategory = (category) => () => {
+    this.setState({
+      selectedCategory: category,
     })
   }
 
@@ -45,18 +58,21 @@ class Home extends Component {
 
   submitPost = (post) => {
     console.log(post)
+    /* TODO: Use redux-form-material-ui */
+    const newPost = {
+    	title:"balls",
+    	body:"benoit",
+    	author:"supes balls",
+    	category:"udacity"
+    }
+    console.log(newPost)
+    this.props.createPost(newPost)
     this.closePostDialog()
-  }
-
-  componentDidMount() {
-    this.props.loadCategories()
   }
 
   // TODO: Filter posts using category and pass to list
   render() {
     const { classes, categories } = this.props
-
-    console.log(this.props)
 
     return (
       <div>
@@ -65,8 +81,9 @@ class Home extends Component {
           open={this.state.sidebarOpen}
           categories={categories}
           toggleSidebar={this.toggleSidebar}
+          selectCategory={this.selectCategory}
         />
-        <PostList />
+        <PostList category={this.state.selectedCategory} />
         <Button
           variant="fab"
           color="secondary"
@@ -77,6 +94,7 @@ class Home extends Component {
         </Button>
         <PostDialog
           open={this.state.postDialogOpen}
+          categories={categories}
           onCancel={this.closePostDialog}
           onSubmit={this.submitPost}
         />
@@ -86,14 +104,15 @@ class Home extends Component {
 }
 
 const mapStateToProps = state => ({
-  categories: state.categories.categoriesByName,
+  categories: state.categories,
 })
 
 const mapDispatchToProps = dispatch => ({
   loadCategories: () => dispatch(fetchCategories()),
+  createPost: (post) => dispatch(createPost(post)),
 })
 
-export default connect(
+export default withRouter(connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(Home))
+)(withStyles(styles)(Home)))
