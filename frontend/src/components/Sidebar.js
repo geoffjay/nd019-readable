@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { withStyles } from 'material-ui/styles'
 import Drawer from 'material-ui/Drawer'
@@ -9,11 +10,15 @@ import ListIcon from 'material-ui-icons/List'
 import LabelOutlineIcon from 'material-ui-icons/LabelOutline'
 import { capitalize } from '../utils/helpers'
 
-const styles = {
+const styles = theme => ({
   list: {
     width: 250,
-  }
-}
+  },
+  link: {
+    textDecoration: 'none',
+    color: theme.palette.secondary.dark,
+  },
+})
 
 const propTypes = {
   classes: PropTypes.object.isRequired,
@@ -44,28 +49,32 @@ const Sidebar = (props) => {
           </ListItem>
           <Divider />
           <List>
-            <ListItem
+            <Link
               key={'all'}
-              button
-              onClick={selectCategory('all')}
+              className={classes.link}
+              to={'/'}
             >
-              <ListItemIcon>
-                <LabelOutlineIcon />
-              </ListItemIcon>
-              <ListItemText primary={'All'} />
-            </ListItem>
-            <Divider />
-            {categories.data && categories.data.map((category) => (
-              <ListItem
-                key={category.name}
-                button
-                onClick={selectCategory(category.name)}
-              >
+              <ListItem button onClick={selectCategory('all')}>
                 <ListItemIcon>
                   <LabelOutlineIcon />
                 </ListItemIcon>
-                <ListItemText primary={capitalize(category.path)} />
+                <ListItemText primary={'All'} />
               </ListItem>
+            </Link>
+            <Divider />
+            {categories.data && categories.data.map((category) => (
+              <Link
+                key={category.name}
+                className={classes.link}
+                to={category.name}
+              >
+                <ListItem button onClick={selectCategory(category.name)}>
+                  <ListItemIcon>
+                    <LabelOutlineIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={capitalize(category.path)} />
+                </ListItem>
+              </Link>
             ))}
           </List>
         </div>

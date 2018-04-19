@@ -7,18 +7,26 @@ import { fetchPosts, fetchPostsByCategory } from '../store/posts/actions'
 
 const propTypes = {
   category: PropTypes.string.isRequired,
+  sortBy: PropTypes.string.isRequired,
 }
 
 class PostList extends Component {
 
   state = {
-    category: 'all'
+    category: 'all',
   }
 
+  /**
+   * @description Fetch the list of posts from the API service.
+   */
   componentDidMount() {
     this.props.loadPosts()
   }
 
+  /**
+   * @description Fetch the posts from the API service for a given category.
+   * @param {object} nextProps - The set of properties to update the component
+   */
   componentWillReceiveProps(nextProps) {
     if (nextProps.category !== this.state.category) {
       this.setState({ category: nextProps.category })
@@ -31,12 +39,27 @@ class PostList extends Component {
   }
 
   render() {
-    const { posts } = this.props
+    const { posts, sortBy } = this.props
+
+    let list = undefined
+    if (posts) {
+      list = Object.values(posts)
+      list.sort(function(a, b) {
+        if (sortBy === 'popularity') {
+          return b.voteScore - a.voteScore
+        } else if (sortBy === 'date') {
+          return b.timestamp - a.timestamp
+        } else {
+          // XXX: This is unnecessary but suppresses a warning
+          return 0
+        }
+      })
+    }
 
     return (
       <div>
-        {posts && Object.keys(posts).map(function(key) {
-          return <PostCard key={key} post={posts[key]} />
+        {list && list.map(function(post) {
+          return <PostCard key={post.id} post={post} />
         })}
       </div>
     )

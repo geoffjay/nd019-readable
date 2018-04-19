@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
+import { reset } from 'redux-form'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
 
 import { withStyles } from 'material-ui/styles'
-import AppBar from 'material-ui/AppBar'
-import Toolbar from 'material-ui/Toolbar'
+import Button from 'material-ui/Button'
 import Card, {
   CardHeader,
   CardContent,
@@ -17,18 +17,31 @@ import Avatar from 'material-ui/Avatar'
 import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
 
-import ArrowBackIcon from 'material-ui-icons/ArrowBack'
+import AddIcon from 'material-ui-icons/Add'
 import ArrowUpwardIcon from 'material-ui-icons/ArrowUpward'
 import ArrowDownwardIcon from 'material-ui-icons/ArrowDownward'
+import EditIcon from 'material-ui-icons/Edit'
 import DeleteIcon from 'material-ui-icons/Delete'
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore'
 
-import { deletePost, upvotePost, downvotePost } from '../store/posts/actions'
+import PostDialog from '../components/PostDialog'
+import PostNavbar from '../components/PostNavbar'
+import CommentDialog from '../components/CommentDialog'
+import CommentList from '../components/CommentList'
+import store from '../store'
+import {
+  updatePost,
+  deletePost,
+  upvotePost,
+  downvotePost,
+} from '../store/posts/actions'
+import {
+  fetchCommentsByPost,
+  createComment,
+  updateComment,
+} from '../store/comments/actions'
 
 const styles = theme => ({
-  nav: {
-    flexGrow: 1,
-  },
   actions: {
     display: 'flex',
   },
@@ -42,12 +55,11 @@ const styles = theme => ({
   expandOpen: {
     transform: 'rotate(180deg)',
   },
-  flex: {
-    flex: 1,
-  },
-  backButton: {
-    marginLeft: -12,
-    marginRight: 12,
+  button: {
+    position: 'fixed',
+    right: 25,
+    bottom: 25,
+    margin: theme.spacing.unit,
   },
   card: theme.mixins.gutters({
     paddingTop: 16,
@@ -69,46 +81,160 @@ class Post extends Component {
   state = {
     post: undefined,
     expanded: true,
+    postDialogOpen: false,
+    commentDialogOpen: false,
   }
 
+  /**
+   * @description Fetch a post from the API service using route params.
+   */
   componentDidMount() {
-    const { match, posts } = this.props
+    const { history, match, posts } = this.props
+    // Hack around the fact that the state isn't loaded on a refresh
+    if (!posts) {
+      history.push('/')
+      return
+    }
     this.setState({
       post: posts[match.params.id]
     })
+    this.props.loadComments(match.params.id)
   }
 
+  /**
+   * @description Expand or close the comments section of the post.
+   */
   handleExpandClick = () => {
     this.setState({
       expanded: !this.state.expanded
     })
   }
 
-  handleDownvote = () => {
-    const { downvote } = this.props
+  /**
+   * @description Reduce the vote score of the post.
+   */
+  handleDownvotePost = () => {
+    const { downvotePost } = this.props
     const { post } = this.state
-    // FIXME: This is a hack to get around the state not being updated
-    post.voteScore--
-    downvote({ post: post })
+    const score = post.voteScore - 1
+    this.setState({
+      post: {
+        ...post,
+        voteScore: score
+      }
+    })
+    downvotePost({ post: post })
   }
 
-  handleUpvote = () => {
-    const { upvote } = this.props
+  /**
+   * @description Increase the vote score of the post.
+   */
+  handleUpvotePost = () => {
+    const { upvotePost } = this.props
     const { post } = this.state
-    // FIXME: This is a hack to get around the state not being updated
-    post.voteScore++
-    upvote({ post: post })
+    const score = post.voteScore + 1
+    this.setState({
+      post: {
+        ...post,
+        voteScore: score
+      }
+    })
+    upvotePost({ post: post })
   }
 
+  /**
+   * @description Set the post state to deleted with the API server.
+   */
   handleDelete = () => {
-    const { deletePost } = this.props
+    const { history, deletePost } = this.props
     const { post } = this.state
     deletePost({ post: post })
-    //this.props.history.go(-1)
+    history.go(-1)
+  }
+
+  /**
+   * @description Open the dialog modal to update the post.
+   */
+  openPostDialog = () => {
+    this.setState({
+      postDialogOpen: true,
+    })
+  }
+
+  /**
+   * @description Close the dialog modal after the post submission.
+   */
+  closePostDialog = () => {
+    this.setState({
+      postDialogOpen: false,
+    })
+  }
+
+  /**
+   * @description Update the post by submitting to the API.
+   * @param {object} post - The post to submit to the server
+   */
+  submitPost = values => {
+    const { updatePost } = this.props
+    const { post } = this.state
+    const newPost = {
+      ...post,
+      title: values.title,
+      body: values.body,
+    }
+
+    this.setState({ post: newPost })
+    updatePost({ post: newPost })
+    // XXX: See comment in Home/submitPost
+    store.dispatch(reset('post'))
+    this.closePostDialog()
+  }
+
+  /**
+   * @description Open the dialog modal to create a new comment.
+   */
+  openCommentDialog = () => {
+    this.setState({
+      commentDialogOpen: true,
+    })
+  }
+
+  /**
+   * @description Close the dialog modal after the comment submission.
+   */
+  closeCommentDialog = () => {
+    this.setState({
+      commentDialogOpen: false,
+    })
+  }
+
+  /**
+   * @description Create a new comment by submitting to the API.
+   * @param {object} comment - The comment to submit to the server
+   */
+  submitComment = values => {
+    const { post } = this.state
+    const comment = {
+      author: values.author,
+      body: values.body,
+      parentId: this.state.post.id,
+    }
+
+    this.props.createComment(comment)
+    // XXX: See comment in Home/submitPost
+    store.dispatch(reset('comment'))
+    this.closeCommentDialog()
+
+    this.setState({
+      post: {
+        ...post,
+        commentCount: post.commentCount + 1
+      }
+    })
   }
 
   render() {
-    const { classes } = this.props
+    const { classes, categories } = this.props
     const { post } = this.state
 
     let subheader = 'undefined'
@@ -121,25 +247,9 @@ class Post extends Component {
 
     return (
       <div>
-        <div className={classes.nav}>
-          <AppBar position="static">
-            <Toolbar>
-              <IconButton
-                className={classes.backButton}
-                color="inherit"
-                component={Link}
-                to="/"
-              >
-                <ArrowBackIcon />
-              </IconButton>
-              <Typography variant="title" color="inherit" className={classes.flex}>
-                Detail
-              </Typography>
-            </Toolbar>
-          </AppBar>
-        </div>
-        <div>
-          {post &&
+        <PostNavbar />
+        {post &&
+          <div>
             <Card className={classes.card} elevation={4}>
               <CardHeader
                 avatar={
@@ -158,7 +268,7 @@ class Post extends Component {
               <CardActions className={classes.actions} disableActionSpacing>
                 <IconButton
                   aria-label="Vote down"
-                  onClick={this.handleDownvote}
+                  onClick={this.handleDownvotePost}
                 >
                   <ArrowDownwardIcon />
                 </IconButton>
@@ -167,7 +277,7 @@ class Post extends Component {
                 </Typography>
                 <IconButton
                   aria-label="Vote up"
-                  onClick={this.handleUpvote}
+                  onClick={this.handleUpvotePost}
                 >
                   <ArrowUpwardIcon />
                 </IconButton>
@@ -182,6 +292,12 @@ class Post extends Component {
                   <ExpandMoreIcon />
                 </IconButton>
                 <IconButton
+                  aria-label="Edit"
+                  onClick={this.openPostDialog}
+                >
+                  <EditIcon />
+                </IconButton>
+                <IconButton
                   aria-label="Delete"
                   onClick={this.handleDelete}
                 >
@@ -191,21 +307,34 @@ class Post extends Component {
               <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
                 <CardContent>
                   <Typography paragraph variant="body2">
-                    Comments
+                    {post.commentCount} Comments
                   </Typography>
-                  {post.comments &&
-                   Object.keys(post.comments).map(function(key) {
-                    return (
-                      <Typography key={key} paragraph>
-                        {post.comments[key]}
-                      </Typography>
-                    )
-                  })}
+                  <CommentList />
                 </CardContent>
               </Collapse>
             </Card>
-          }
-        </div>
+            <Button
+              variant="fab"
+              color="secondary"
+              className={classes.button}
+              onClick={this.openCommentDialog}
+            >
+              <AddIcon />
+            </Button>
+            <PostDialog
+              open={this.state.postDialogOpen}
+              categories={categories}
+              postData={post}
+              onCancel={this.closePostDialog}
+              onSubmit={this.submitPost}
+            />
+            <CommentDialog
+              open={this.state.commentDialogOpen}
+              onCancel={this.closeCommentDialog}
+              onSubmit={this.submitComment}
+            />
+          </div>
+        }
       </div>
     )
   }
@@ -215,15 +344,21 @@ Post.propTypes = propTypes
 
 const mapStateToProps = state => ({
   posts: state.posts.postsById,
+  comments: state.comments.commentsByPost,
+  categories: state.categories,
 })
 
 const mapDispatchToProps = dispatch => ({
+  updatePost: (post) => dispatch(updatePost(post)),
   deletePost: (post) => dispatch(deletePost(post)),
-  upvote: (post) => dispatch(upvotePost(post)),
-  downvote: (post) => dispatch(downvotePost(post)),
+  upvotePost: (post) => dispatch(upvotePost(post)),
+  downvotePost: (post) => dispatch(downvotePost(post)),
+  loadComments: (postId) => dispatch(fetchCommentsByPost(postId)),
+  createComment: (comment) => dispatch(createComment(comment)),
+  updateComment: (comment) => dispatch(updateComment(comment)),
 })
 
-export default connect(
+export default withRouter(connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(Post))
+)(withStyles(styles)(Post)))

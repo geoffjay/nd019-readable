@@ -15,34 +15,40 @@ const headers = {
 
 const api = `http://${host}:${port}`
 
-/* GET /categories
+/**
+ * @description Retrieve all categories.
  *
- * TODO: Add documentation
+ * GET /categories
  */
 export const getCategories = () =>
   fetch(`${api}/categories`, { headers })
     .then(res => res.json())
     .then(data => data.categories)
 
-/* GET /:category/posts
+/**
+ * @description Retrieve all posts for a category.
+ * @param {string} categoryId - ID of the category to retrieve all posts for
  *
- * TODO: Add documentation
+ * GET /:category/posts
  */
 export const getPostsByCategory = (categoryId) =>
   fetch(`${api}/${categoryId}/posts`, { headers })
     .then(res => res.json())
 
-/* GET /posts
+/**
+ * @description Retrieve all posts.
  *
- * TODO: Add documentation
+ * GET /posts
  */
 export const getPosts = () =>
   fetch(`${api}/posts`, { headers })
     .then(res => res.json())
 
-/* POST /posts
+/**
+ * @description Create a new post.
+ * @param {object} post - Data to create a new post from
  *
- * TODO: Add documentation
+ * POST /posts
  */
 export const addPost = (post) => {
   post.id = uuidv1()
@@ -54,17 +60,22 @@ export const addPost = (post) => {
   }).then(res => res.json())
 }
 
-/* GET /posts/:id
+/**
+ * @description Retrieve a single post.
+ * @param {string} id - UUID of the post to retrieve
  *
- * TODO: Add documentation
+ * GET /posts/:id
  */
 export const getPost = (id) =>
   fetch(`${api}/posts/${id}`, { headers })
     .then(res => res.json())
 
-/* POST /posts/:id
+/**
+ * @description Change the vote score of a post.
+ * @param {string} id - UUID of the post to change
+ * @param {string} option - `upvote' or `downvote'
  *
- * TODO: Add documentation
+ * POST /posts/:id
  */
 export const votePost = (id, option) =>
   fetch(`${api}/posts/${id}`, {
@@ -73,14 +84,25 @@ export const votePost = (id, option) =>
     body: JSON.stringify(option)
   }).then(res => res.json())
 
-/* PUT /posts/:id
+/**
+ * @description Update the post content.
+ * @param {object} post - Data to update the post with
  *
- * TODO: Add documentation
+ * PUT /posts/:id
  */
+export const updatePost = (post) => {
+  return fetch(`${api}/posts/${post.id}`, {
+    method: 'PUT',
+    headers: { ...headers, 'content-type': 'application/json' },
+    body: JSON.stringify(post)
+  }).then(res => res.json())
+}
 
-/* DELETE /posts/:id
+/**
+ * @description Delete a post.
+ * @param {string} id - UUID of the post to delete
  *
- * TODO: Add documentation
+ * DELETE /posts/:id
  */
 export const removePost = (id) =>
   fetch(`${api}/posts/${id}`, {
@@ -88,17 +110,21 @@ export const removePost = (id) =>
     headers
   }).then(res => res.json())
 
-/* GET /posts/:id/comments
+/**
+ * @description Retrieve all comments for a post.
+ * @param {string} postId - UUID of the post to retrieve comments for
  *
- * TODO: Add documentation
+ * GET /posts/:id/comments
  */
 export const getPostComments = (postId) =>
   fetch(`${api}/posts/${postId}/comments`, { headers })
     .then(res => res.json())
 
-/* POST /comments
+/**
+ * @description Create a new comment
+ * @param {object} comment - Data to use to create a new comment
  *
- * TODO: Add documentation
+ * POST /comments
  */
 export const addComment = (comment) => {
   comment.id = uuidv1()
@@ -110,17 +136,22 @@ export const addComment = (comment) => {
   }).then(res => res.json())
 }
 
-/* GET /comments/:id
+/**
+ * @description Retrieve a comment
+ * @param {string} id - UUID of the comment to retrieve
  *
- * TODO: Add documentation
+ * GET /comments/:id
  */
 export const getComment = (id) =>
   fetch(`${api}/comments/${id}`, { headers })
     .then(res => res.json())
 
-/* POST /comments/:id
+/**
+ * @description Change the vote score of a comment.
+ * @param {string} id - UUID of the comment to change
+ * @param {string} option - `upvote' or `downvote'
  *
- * TODO: Add documentation
+ * POST /comments/:id
  */
 export const voteComment = (id, option) =>
   fetch(`${api}/comments/${id}`, {
@@ -129,14 +160,26 @@ export const voteComment = (id, option) =>
     body: JSON.stringify(option)
   }).then(res => res.json())
 
-/* PUT /comments/:id
+/**
+ * @description Update the comment content.
+ * @param {object} comment - Data to update the comment with
  *
- * TODO: Add documentation
+ * PUT /comments/:id
  */
+export const updateComment = (comment) => {
+  console.log(comment)
+  return fetch(`${api}/comments/${comment.id}`, {
+    method: 'PUT',
+    headers: { ...headers, 'content-type': 'application/json' },
+    body: JSON.stringify(comment)
+  }).then(res => res.json())
+}
 
-/* DELETE /comments/:id
+/**
+ * @description Delete a comment.
+ * @param {string} id - UUID of the comment to delete
  *
- * TODO: Add documentation
+ * DELETE /comments/:id
  */
 export const removeComment = (id) =>
   fetch(`${api}/comments/${id}`, {
