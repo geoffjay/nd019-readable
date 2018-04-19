@@ -1,11 +1,10 @@
 import * as types from './types'
 
 const comments = (state = [], action) => {
-  const { post, comment } = action
+  const { comment } = action
 
   switch (action.type) {
   case types.COMMENTS_FETCHED_BY_POST:
-    // TODO: Decide how to load comments, this doesn't feel right
     return {
       ...state,
       commentsByPost: action.commentsByPost
@@ -13,48 +12,54 @@ const comments = (state = [], action) => {
   case types.COMMENTS_CREATE:
     return {
       ...state,
-      [comment.id]: comment,
-      // XXX: Could this be done as a single assignment?
-      [comment.id]: {
-        ...state[comment.id],
-        parentId: post.id
-      },
-      [post.id]: {
-        ...state[post.id],
-        commentCount: post.commentCount + 1
+      commentsByPost: {
+        ...state.commentsByPost,
+        [comment.id]: comment
       }
     }
   case types.COMMENTS_UPDATE:
     return {
       ...state,
-      [comment.id]: {
-        ...state[comment.id],
-        timestamp: comment.timestamp,
-        body: comment.body
+      commentsByPost: {
+        ...state.commentsByPost,
+        [comment.id]: {
+          ...state.commentsByPost[comment.id],
+          author: comment.author,
+          body: comment.body
+        }
       }
     }
   case types.COMMENTS_DELETE:
     return {
       ...state,
-      [comment.id]: {
-        ...state[comment.id],
-        deleted: true
+      commentsByPost: {
+        ...state.commentsByPost,
+        [comment.id]: {
+          ...state.commentsByPost[comment.id],
+          deleted: true
+        }
       }
     }
   case types.COMMENTS_UPVOTE:
     return {
       ...state,
-      [comment.id]: {
-        ...state[comment.id],
-        voteScore: comment.voteScore + 1
+      commentsByPost: {
+        ...state.commentsByPost,
+        [comment.id]: {
+          ...state.commentsByPost[comment.id],
+          voteScore: comment.voteScore
+        }
       }
     }
   case types.COMMENTS_DOWNVOTE:
     return {
       ...state,
-      [comment.id]: {
-        ...state[comment.id],
-        voteScore: comment.voteScore - 1
+      commentsByPost: {
+        ...state.commentsByPost,
+        [comment.id]: {
+          ...state.commentsByPost[comment.id],
+          voteScore: comment.voteScore
+        }
       }
     }
   default:

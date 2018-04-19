@@ -7,12 +7,12 @@ const posts = (state = {}, action) => {
   case types.POSTS_FETCHED:
     return {
       ...state,
-      postsById: action.postsById
+      postsById: action.postsById,
     }
   case types.POSTS_FETCHED_BY_CATEGORY:
     return {
       ...state,
-      postsById: action.postsById
+      postsById: action.postsById,
     }
   case types.POSTS_CREATE:
     return {

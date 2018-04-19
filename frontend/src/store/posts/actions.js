@@ -7,7 +7,10 @@ export function fetchPosts() {
     api.getPosts()
       .then((posts) => {
         const postsById = _.keyBy(_.shuffle(_.flatten(posts)), (post) => post.id)
-        dispatch({ type: types.POSTS_FETCHED, postsById })
+        dispatch({
+          type: types.POSTS_FETCHED,
+          postsById,
+        })
       }).catch(error => {
         throw(error)
       })
@@ -19,7 +22,10 @@ export function fetchPostsByCategory(category) {
     api.getPostsByCategory(category)
       .then((posts) => {
         const postsById = _.keyBy(_.shuffle(_.flatten(posts)), (post) => post.id)
-        dispatch({ type: types.POSTS_FETCHED_BY_CATEGORY, postsById })
+        dispatch({
+          type: types.POSTS_FETCHED_BY_CATEGORY,
+          postsById,
+        })
       }).catch(error => {
         throw(error)
       })
@@ -38,9 +44,13 @@ export function createPost(post) {
 }
 
 export function updatePost({ post }) {
-  return {
-    type: types.POSTS_UPDATE,
-    post,
+  return dispatch => {
+    api.updatePost(post)
+      .then((post) => {
+        dispatch({ type: types.POSTS_UPDATE, post })
+      }).catch(error => {
+        throw(error)
+      })
   }
 }
 
