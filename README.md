@@ -33,8 +33,6 @@ curl -X GET -H 'authorization:anonymous' http://localhost:3001/posts
 
 ## React/Redux Frontend
 
-Additional information about the frontend and how to use it can be found in its [README](frontend/README.md) file.
-
 ### Installation and Usage
 
 In another terminal opened to the location this repository was cloned in execute these commands to install the frontend
@@ -45,3 +43,6 @@ cd readable/frontend
 yarn install
 yarn start
 ```
+
+This will open [http://localhost:3000](http://localhost:3000) in a new tab within a web browser, if it does not just
+click the link provided.
