@@ -3,7 +3,11 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import PostCard from './PostCard'
-import { fetchPosts, fetchPostsByCategory } from '../store/posts/actions'
+import {
+  deletePost,
+  fetchPosts,
+  fetchPostsByCategory
+} from '../store/posts/actions'
 
 const propTypes = {
   category: PropTypes.string.isRequired,
@@ -38,6 +42,32 @@ class PostList extends Component {
     }
   }
 
+  /**
+   * @description Set the post state to deleted with the API server.
+   * @param {string} key - Post ID to delete
+   */
+  handleDelete = (key) => {
+    const { posts, deletePost } = this.props
+    deletePost({ post: posts[key] })
+  }
+
+  /**
+   * @description Update the post using the API server.
+   * @param {string} key - Post ID to modify content of
+   */
+  handleEdit = (key) => {
+    /*
+     *const { posts } = this.props
+     */
+
+    /*
+     *this.setState({
+     *  selectedComment: comments[key],
+     *  commentDialogOpen: true,
+     *})
+     */
+  }
+
   render() {
     const { posts, sortBy } = this.props
 
@@ -58,9 +88,18 @@ class PostList extends Component {
 
     return (
       <div>
-        {list && list.map(function(post) {
-          return <PostCard key={post.id} post={post} />
-        })}
+        {list &&
+         list.filter((post) => post.deleted === false)
+             .map(function(post) {
+          return (
+            <PostCard
+              key={post.id}
+              post={post}
+              onEdit={() => this.handleEdit(post.id)}
+              onDelete={() => this.handleDelete(post.id)}
+            />
+          )
+        }, this)}
       </div>
     )
   }
@@ -75,6 +114,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   loadPosts: () => dispatch(fetchPosts()),
   loadPostsByCategory: (category) => dispatch(fetchPostsByCategory(category)),
+  deletePost: (post) => dispatch(deletePost(post)),
 })
 
 export default withRouter(connect(

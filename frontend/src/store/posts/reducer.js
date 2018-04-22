@@ -44,7 +44,6 @@ const posts = (state = {}, action) => {
           deleted: true
         }
       }
-      // for (comment of(?) state.comments) { comment.parentDeleted = true }
     }
   case types.POSTS_UPVOTE:
     return {

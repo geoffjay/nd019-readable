@@ -86,7 +86,7 @@ class Post extends Component {
   }
 
   /**
-   * @description Fetch a post from the API service using route params.
+   * @description Fetch a post from the list using route params.
    */
   componentDidMount() {
     const { history, match, posts } = this.props
