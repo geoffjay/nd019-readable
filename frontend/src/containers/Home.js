@@ -35,12 +35,22 @@ class Home extends Component {
    * @description Fetch the list of categories from the API service.
    */
   componentDidMount() {
-    const { match } = this.props
-    const category = (match.params.category) ? match.params.category : 'all'
-    this.setState({
-      selectedCategory: category
-    })
-    this.props.loadCategories()
+    const { categories, history, match } = this.props
+
+    /*
+     *console.log(`Searching for ${match.params.category}`)
+     *console.log(categories)
+     *console.log(Object.values(categories))
+     */
+
+    if (Object.values(categories).includes(this.state.selectedCategory) ||
+        match.params.category === undefined) {
+      this.setState({
+        selectedCategory: match.params.category ? match.params.category : 'all'
+      })
+    } else {
+      history.push('/error')
+    }
   }
 
   /**

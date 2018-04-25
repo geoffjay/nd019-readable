@@ -28,6 +28,7 @@ import PostDialog from '../components/PostDialog'
 import PostNavbar from '../components/PostNavbar'
 import CommentDialog from '../components/CommentDialog'
 import CommentList from '../components/CommentList'
+import * as api from '../utils/api'
 import store from '../store'
 import {
   updatePost,
@@ -90,15 +91,20 @@ class Post extends Component {
    */
   componentDidMount() {
     const { history, match, posts } = this.props
-    // Hack around the fact that the state isn't loaded on a refresh
-    if (!posts) {
-      history.push('/')
-      return
-    }
-    this.setState({
-      post: posts[match.params.id]
+
+    // This is a lame way to do this, but it works sooo.....
+    api.getPost(match.params.id).then((response) => {
+      if (Object.keys(response).length === 0) {
+        history.push('/error')
+      }
     })
-    this.props.loadComments(match.params.id)
+
+    if (posts) {
+      this.setState({
+        post: posts[match.params.id]
+      })
+      this.props.loadComments(match.params.id)
+    }
   }
 
   /**
