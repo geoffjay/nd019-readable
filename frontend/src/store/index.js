@@ -25,7 +25,9 @@ const initialStore = {
     postsById: undefined,
     isFetched: false
   },
-  comments: {},
+  comments: {
+    selectedCommentId: undefined,
+  },
 }
 
 const store = createStore(

@@ -17,6 +17,7 @@ import {
   deleteComment,
   upvoteComment,
   downvoteComment,
+  selectComment,
 } from '../store/comments/actions'
 
 const styles = theme => ({
@@ -74,7 +75,9 @@ class CommentList extends Component {
    * @param {string} key - Comment ID to modify content of
    */
   handleEdit = (key) => {
-    const { comments } = this.props
+    const { comments, selectComment } = this.props
+
+    selectComment(comments[key])
 
     this.setState({
       selectedComment: comments[key],
@@ -117,52 +120,57 @@ class CommentList extends Component {
 
     return (
       <div className={classes.root}>
-        <List component="nav">
-          {comments && Object.keys(comments).map((key) => (
-            <div key={key}>
-              {comments[key].deleted === false &&
-                <ListItem divider>
-                  <ListItemText
-                    primary={comments[key].author}
-                    secondary={comments[key].body}
-                  />
-                  <IconButton
-                    aria-label="Vote down"
-                    onClick={() => this.handleDownvote.call(this, key)}
-                  >
-                    <ArrowDownwardIcon />
-                  </IconButton>
-                  <Typography component="p">
-                    {comments[key].voteScore}
-                  </Typography>
-                  <IconButton
-                    aria-label="Vote up"
-                    onClick={() => this.handleUpvote.call(this, key)}
-                  >
-                    <ArrowUpwardIcon />
-                  </IconButton>
-                  <IconButton
-                    aria-label="Edit"
-                    onClick={() => this.handleEdit.call(this, key)}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton
-                    aria-label="Delete"
-                    onClick={() => this.handleDelete.call(this, key)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </ListItem>
-              }
-            </div>
-          ))}
-        </List>
-        <CommentDialog
-          open={this.state.commentDialogOpen}
-          onCancel={this.closeCommentDialog}
-          onSubmit={this.submitComment}
-        />
+        {comments &&
+          <div>
+            <List component="nav">
+              {Object.keys(comments).map((key) => (
+                <div key={key}>
+                  {comments[key].deleted === false &&
+                    <ListItem divider>
+                      <ListItemText
+                        primary={comments[key].author}
+                        secondary={comments[key].body}
+                      />
+                      <IconButton
+                        aria-label="Vote down"
+                        onClick={() => this.handleDownvote.call(this, key)}
+                      >
+                        <ArrowDownwardIcon />
+                      </IconButton>
+                      <Typography component="p">
+                        {comments[key].voteScore}
+                      </Typography>
+                      <IconButton
+                        aria-label="Vote up"
+                        onClick={() => this.handleUpvote.call(this, key)}
+                      >
+                        <ArrowUpwardIcon />
+                      </IconButton>
+                      <IconButton
+                        aria-label="Edit"
+                        onClick={() => this.handleEdit.call(this, key)}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton
+                        aria-label="Delete"
+                        onClick={() => this.handleDelete.call(this, key)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </ListItem>
+                  }
+                </div>
+              ))}
+            </List>
+            <CommentDialog
+              open={this.state.commentDialogOpen}
+              commentData={comments[this.state.selectedCommentId]}
+              onCancel={this.closeCommentDialog}
+              onSubmit={this.submitComment}
+            />
+          </div>
+        }
       </div>
     )
   }
@@ -172,6 +180,7 @@ CommentList.propTypes = propTypes
 
 const mapStateToProps = state => ({
   comments: state.comments.commentsByPost,
+  selectedCommentId: state.comments.selectedCommentId,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -179,6 +188,7 @@ const mapDispatchToProps = dispatch => ({
   deleteComment: (comment) => dispatch(deleteComment(comment)),
   upvoteComment: (comment) => dispatch(upvoteComment(comment)),
   downvoteComment: (comment) => dispatch(downvoteComment(comment)),
+  selectComment: (comment) => dispatch(selectComment(comment)),
 })
 
 export default connect(

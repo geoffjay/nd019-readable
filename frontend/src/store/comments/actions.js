@@ -69,3 +69,9 @@ export function downvoteComment ({ comment }) {
       })
   }
 }
+
+export function selectComment (comment) {
+  return dispatch => {
+    dispatch({ type: types.COMMENTS_SELECT, comment })
+  }
+}

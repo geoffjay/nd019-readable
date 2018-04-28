@@ -62,6 +62,11 @@ const comments = (state = [], action) => {
         }
       }
     }
+  case types.COMMENTS_SELECT:
+    return {
+      ...state,
+      selectedCommentId: comment.id
+    }
   default:
     return state
   }
