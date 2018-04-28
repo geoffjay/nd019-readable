@@ -4,7 +4,7 @@ import * as types from './types'
 
 export function fetchPosts() {
   return dispatch => {
-    api.getPosts()
+    return api.getPosts()
       .then((posts) => {
         const postsById = _.keyBy(_.shuffle(_.flatten(posts)), (post) => post.id)
         dispatch({

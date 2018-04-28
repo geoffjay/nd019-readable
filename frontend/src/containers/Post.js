@@ -31,6 +31,7 @@ import CommentList from '../components/CommentList'
 import * as api from '../utils/api'
 import store from '../store'
 import {
+  fetchPosts,
   updatePost,
   deletePost,
   upvotePost,
@@ -90,7 +91,7 @@ class Post extends Component {
    * @description Fetch a post from the list using route params.
    */
   componentDidMount() {
-    const { history, match, posts } = this.props
+    const { history, match, posts, loadPosts } = this.props
 
     // This is a lame way to do this, but it works sooo.....
     api.getPost(match.params.id).then((response) => {
@@ -99,12 +100,19 @@ class Post extends Component {
       }
     })
 
+    new Promise(resolve => {
+      loadPosts()
+    })
+
     if (posts) {
       this.setState({
         post: posts[match.params.id]
       })
       this.props.loadComments(match.params.id)
     }
+  }
+
+  componentWillMount() {
   }
 
   /**
@@ -239,6 +247,25 @@ class Post extends Component {
     })
   }
 
+  /**
+   * @description I'm fully aware that this is the wrong way to do this, but
+   * it works, and the way that the routing needs to be done for this project
+   * causes this to be much more confusing than if it was just /posts/{postId}.
+   */
+  update = () => {
+    const { match, posts, loadPosts } = this.props
+    new Promise(resolve => {
+      loadPosts()
+    })
+
+    if (posts) {
+      this.setState({
+        post: posts[match.params.id]
+      })
+      this.props.loadComments(match.params.id)
+    }
+  }
+
   render() {
     const { classes, categories } = this.props
     const { post } = this.state
@@ -249,6 +276,8 @@ class Post extends Component {
       const date = dateTime.toDateString()
       const time = dateTime.toTimeString()
       subheader = `${date} ${time}`
+    } else {
+      this.update()
     }
 
     return (
@@ -355,6 +384,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
+  loadPosts: () => dispatch(fetchPosts()),
   updatePost: (post) => dispatch(updatePost(post)),
   deletePost: (post) => dispatch(deletePost(post)),
   upvotePost: (post) => dispatch(upvotePost(post)),
