@@ -10,7 +10,7 @@ import ArrowUpwardIcon from 'material-ui-icons/ArrowUpward'
 import ArrowDownwardIcon from 'material-ui-icons/ArrowDownward'
 import EditIcon from 'material-ui-icons/Edit'
 import DeleteIcon from 'material-ui-icons/Delete'
-import CommentDialog from '../components/CommentDialog'
+import EditCommentDialog from '../components/EditCommentDialog'
 import store from '../store'
 import {
   updateComment,
@@ -34,7 +34,6 @@ const propTypes = {
 class CommentList extends Component {
 
   state = {
-    comments: undefined,
     commentDialogOpen: false,
     selectedComment: undefined,
   }
@@ -109,6 +108,8 @@ class CommentList extends Component {
 
     this.setState({ selectedComment: undefined, })
 
+    console.log(values)
+
     updateComment({ comment: newComment })
     // XXX: See comment in Home/submitPost
     store.dispatch(reset('comment'))
@@ -163,12 +164,14 @@ class CommentList extends Component {
                 </div>
               ))}
             </List>
-            <CommentDialog
-              open={this.state.commentDialogOpen}
-              commentData={comments[this.state.selectedCommentId]}
-              onCancel={this.closeCommentDialog}
-              onSubmit={this.submitComment}
-            />
+            {this.state.selectedCommentId !== '' ?
+              <EditCommentDialog
+                open={this.state.commentDialogOpen}
+                commentData={comments[this.state.selectedCommentId]}
+                onCancel={this.closeCommentDialog}
+                onSubmit={this.submitComment}
+              />
+            : <div />}
           </div>
         }
       </div>
