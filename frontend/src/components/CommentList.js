@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { reset } from 'redux-form'
 import PropTypes from 'prop-types'
 import { withStyles } from 'material-ui/styles'
 import List, { ListItem, ListItemText } from 'material-ui/List'
@@ -11,7 +10,6 @@ import ArrowDownwardIcon from 'material-ui-icons/ArrowDownward'
 import EditIcon from 'material-ui-icons/Edit'
 import DeleteIcon from 'material-ui-icons/Delete'
 import EditCommentDialog from '../components/EditCommentDialog'
-import store from '../store'
 import {
   updateComment,
   deleteComment,
@@ -70,8 +68,8 @@ class CommentList extends Component {
   }
 
   /**
-   * @description Update the comment using the API server.
-   * @param {string} key - Comment ID to modify content of
+   * @description Select the comment for edit.
+   * @param {string} key - ID of the comment to select
    */
   handleEdit = (key) => {
     const { comments, selectComment } = this.props
@@ -106,14 +104,10 @@ class CommentList extends Component {
       body: values.body,
     }
 
-    this.setState({ selectedComment: undefined, })
-
-    console.log(values)
-
     updateComment({ comment: newComment })
-    // XXX: See comment in Home/submitPost
-    store.dispatch(reset('comment'))
     this.closeCommentDialog()
+
+    this.setState({ selectedComment: undefined, })
   }
 
   render() {
@@ -167,7 +161,6 @@ class CommentList extends Component {
             {this.state.selectedCommentId !== '' ?
               <EditCommentDialog
                 open={this.state.commentDialogOpen}
-                commentData={comments[this.state.selectedCommentId]}
                 onCancel={this.closeCommentDialog}
                 onSubmit={this.submitComment}
               />

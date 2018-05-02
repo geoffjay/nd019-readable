@@ -65,7 +65,13 @@ const comments = (state = [], action) => {
   case types.COMMENTS_SELECT:
     return {
       ...state,
-      selectedCommentId: comment.id
+      selectedCommentId: comment.id,
+      selectedComment: state.commentsByPost[comment.id],
+    }
+  case types.COMMENTS_FETCH_COMMENT:
+    return {
+      ...state,
+      comment: comment
     }
   default:
     return state

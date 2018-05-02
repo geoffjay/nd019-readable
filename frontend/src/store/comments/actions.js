@@ -27,6 +27,7 @@ export function createComment(comment) {
 }
 
 export function updateComment({ comment }) {
+  console.log(comment)
   return dispatch => {
     api.updateComment(comment)
       .then((comment) => {
@@ -73,5 +74,14 @@ export function downvoteComment ({ comment }) {
 export function selectComment (comment) {
   return dispatch => {
     dispatch({ type: types.COMMENTS_SELECT, comment })
+  }
+}
+
+export function fetchComment (id) {
+  return dispatch => {
+    api.getComment(id)
+      .then((comment) => {
+        dispatch({ type: types.COMMENTS_FETCH_COMMENT, comment })
+      })
   }
 }

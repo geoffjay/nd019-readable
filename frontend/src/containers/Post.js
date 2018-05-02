@@ -24,7 +24,7 @@ import EditIcon from 'material-ui-icons/Edit'
 import DeleteIcon from 'material-ui-icons/Delete'
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore'
 
-import PostDialog from '../components/PostDialog'
+import EditPostDialog from '../components/EditPostDialog'
 import PostNavbar from '../components/PostNavbar'
 import CommentDialog from '../components/CommentDialog'
 import CommentList from '../components/CommentList'
@@ -112,9 +112,6 @@ class Post extends Component {
     }
   }
 
-  componentWillMount() {
-  }
-
   /**
    * @description Expand or close the comments section of the post.
    */
@@ -189,18 +186,16 @@ class Post extends Component {
    * @param {object} post - The post to submit to the server
    */
   submitPost = values => {
-    const { updatePost } = this.props
+    const { updatePost, form } = this.props
     const { post } = this.state
     const newPost = {
       ...post,
-      title: values.title,
-      body: values.body,
+      title: form.editPost.values.title,
+      body: form.editPost.values.body,
     }
 
     this.setState({ post: newPost })
     updatePost({ post: newPost })
-    // XXX: See comment in Home/submitPost
-    store.dispatch(reset('post'))
     this.closePostDialog()
   }
 
@@ -267,7 +262,7 @@ class Post extends Component {
   }
 
   render() {
-    const { classes, categories } = this.props
+    const { classes } = this.props
     const { post } = this.state
 
     let subheader = 'undefined'
@@ -356,9 +351,8 @@ class Post extends Component {
             >
               <AddIcon />
             </Button>
-            <PostDialog
+            <EditPostDialog
               open={this.state.postDialogOpen}
-              categories={categories}
               postData={post}
               onCancel={this.closePostDialog}
               onSubmit={this.submitPost}
@@ -381,6 +375,7 @@ const mapStateToProps = state => ({
   posts: state.posts.postsById,
   comments: state.comments.commentsByPost,
   categories: state.categories,
+  form: state.form,
 })
 
 const mapDispatchToProps = dispatch => ({

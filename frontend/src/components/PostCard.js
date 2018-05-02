@@ -55,12 +55,6 @@ const propTypes = {
 
 class PostCard extends Component {
 
-  /*
-   *state = {
-   *  postDialogOpen: false,
-   *}
-   */
-
   render() {
     const {
       classes,
@@ -81,61 +75,65 @@ class PostCard extends Component {
 
     return (
       <div>
-        <Card className={classes.card}>
-          <CardHeader
-            avatar={
-              <Avatar aria-label="User" className={classes.avatar}>
-                {post.author[0].toUpperCase()}
-              </Avatar>
-            }
-            action={
-              <IconButton>
-                <MoreVertIcon />
-              </IconButton>
-            }
-            title={link}
-            subheader={subheader}
-          />
-          <CardContent>
-            <Typography component="p">
-              {post.body}
-            </Typography>
-            <Typography className={classes.comments} component="p">
-              ({post.commentCount} comments)
-            </Typography>
-          </CardContent>
-          <CardActions className={classes.actions} disableActionSpacing>
-            <IconButton
-              aria-label="Vote down"
-              onClick={(post) => downvotePost({ post: this.props.post })}
-            >
-              <ArrowDownwardIcon />
-            </IconButton>
-            <Typography component="p">
-              {post.voteScore}
-            </Typography>
-            <IconButton
-              aria-label="Vote up"
-              onClick={(post) => upvotePost({ post: this.props.post })}
-            >
-              <ArrowUpwardIcon />
-            </IconButton>
-            <div className={classes.buttons}>
-              <IconButton
-                aria-label="Edit"
-                onClick={() => onEdit.call(post.id)}
-              >
-                <EditIcon />
-              </IconButton>
-              <IconButton
-                aria-label="Delete"
-                onClick={() => onDelete.call(post.id)}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </div>
-          </CardActions>
-        </Card>
+        {post &&
+          <div>
+            <Card className={classes.card}>
+              <CardHeader
+                avatar={
+                  <Avatar aria-label="User" className={classes.avatar}>
+                    {post.author[0].toUpperCase()}
+                  </Avatar>
+                }
+                action={
+                  <IconButton>
+                    <MoreVertIcon />
+                  </IconButton>
+                }
+                title={link}
+                subheader={subheader}
+              />
+              <CardContent>
+                <Typography component="p">
+                  {post.body}
+                </Typography>
+                <Typography className={classes.comments} component="p">
+                  ({post.commentCount} comments)
+                </Typography>
+              </CardContent>
+              <CardActions className={classes.actions} disableActionSpacing>
+                <IconButton
+                  aria-label="Vote down"
+                  onClick={(post) => downvotePost({ post: this.props.post })}
+                >
+                  <ArrowDownwardIcon />
+                </IconButton>
+                <Typography component="p">
+                  {post.voteScore}
+                </Typography>
+                <IconButton
+                  aria-label="Vote up"
+                  onClick={(post) => upvotePost({ post: this.props.post })}
+                >
+                  <ArrowUpwardIcon />
+                </IconButton>
+                <div className={classes.buttons}>
+                  <IconButton
+                    aria-label="Edit"
+                    onClick={() => onEdit.call(post.id)}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton
+                    aria-label="Delete"
+                    onClick={() => onDelete.call(post.id)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </div>
+              </CardActions>
+            </Card>
+          </div>
+        }
       </div>
     )
   }

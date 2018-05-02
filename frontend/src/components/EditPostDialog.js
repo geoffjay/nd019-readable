@@ -9,61 +9,42 @@ import Dialog, {
   DialogContentText,
   DialogTitle,
 } from 'material-ui/Dialog'
-import Typography from 'material-ui/Typography'
-import { updateComment } from '../store/comments/actions'
+import { Typography } from 'material-ui/Typography'
+import { updatePost } from '../store/posts/actions'
 import styles from '../forms.css'
 
 const propTypes = {
   open: PropTypes.bool.isRequired,
+  postData: PropTypes.object.isRequired,
   onCancel: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
 }
 
-class EditCommentDialog extends Component {
+class EditPostDialog extends Component {
 
   state = { once: true }
 
-  /**
-   * @description This is the wrong way to do this, but handling forms in react
-   * is ridiculous and I've given up on trying to do it right.
-   */
   update = () => {
-    if (this.props.selectedComment && this.state.once) {
+    if (this.props.postData && this.state.once) {
       const initData = {
-        author: this.props.selectedComment.author,
-        body: this.props.selectedComment.body,
+        author: this.props.postData.author,
+        title: this.props.postData.title,
+        body: this.props.postData.body,
       }
       this.props.initialize(initData)
       this.setState({ once: false })
     }
   }
 
-  /**
-   * @description This is such a lame hack to read the form from the state this
-   * way, but after fighting with redux-form for way too long this works, so
-   * here it is.
-   */
-  submitComment = values => {
-    const { updateComment, selectedComment, form } = this.props
-    const newComment = {
-      ...selectedComment,
-      body: form.editComment.values.body,
-    }
-
-    updateComment({ comment: newComment })
-    this.props.onCancel()
-
-    this.setState({ selectedComment: undefined })
-  }
-
   render() {
     const {
       open,
       handleSubmit,   // This is added by redux-form
+      onSubmit,
       onCancel,
     } = this.props
 
-    if (this.props.selectedComment) {
+    if (this.props.postData) {
       this.update()
     }
 
@@ -73,38 +54,41 @@ class EditCommentDialog extends Component {
         onClose={onCancel}
         aria-labelledby="form-dialog-title"
       >
-        <form onSubmit={handleSubmit(this.submitComment)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <DialogTitle id="form-dialog-title">
-            Edit Comment
+            Edit Post
           </DialogTitle>
           <DialogContent>
             <DialogContentText>
               Modify the post content.
             </DialogContentText>
-            <Typography component="p">
-              Author:
-            </Typography>
+            <Field
+              name="title"
+              component="input"
+              margin="normal"
+              id="title"
+              className={styles.postTitle}
+              label="Title"
+              type="text"
+              autoFocus={true}
+            />
             <Field
               name="author"
               component="input"
               margin="normal"
               id="author"
-              className={styles.commentAuthor}
+              className={styles.postAuthor}
               label="Author"
               type="text"
               disabled={true}
             />
-            <Typography component="p">
-              Comment:
-            </Typography>
             <Field
               name="body"
               component="input"
               margin="normal"
               id="body"
-              label="Comment"
-              className={styles.commentBody}
-              autoFocus={true}
+              label="Post"
+              className={styles.postBody}
               type="text"
             />
           </DialogContent>
@@ -122,21 +106,19 @@ class EditCommentDialog extends Component {
   }
 }
 
-EditCommentDialog.propTypes = propTypes
+EditPostDialog.propTypes = propTypes
 
-const selector = formValueSelector('editComment')
+const selector = formValueSelector('editPost')
 
-EditCommentDialog = connect(state => ({
-  comment: selector(state, 'editComment'),
-  selectedCommentId: state.comments.selectedCommentId,
-  selectedComment: state.comments.selectedComment,
+EditPostDialog = connect(state => ({
+  post: selector(state, 'editPost'),
   form: state.form,
 }), dispatch => ({
-  updateComment: (comment) => dispatch(updateComment(comment)),
-}))(EditCommentDialog)
+  updatePost: (post) => dispatch(updatePost(post)),
+}))(EditPostDialog)
 
 export default reduxForm({
-  form: 'editComment',
-  fields: ['author', 'body'],
+  form: 'editPost',
+  fields: ['title', 'author', 'category', 'body'],
   enableReinitialize: true,
-})(EditCommentDialog)
+})(EditPostDialog)

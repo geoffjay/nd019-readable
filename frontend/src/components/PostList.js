@@ -3,7 +3,9 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import PostCard from './PostCard'
+import EditPostDialog from './EditPostDialog'
 import {
+  updatePost,
   deletePost,
   fetchPosts,
   fetchPostsByCategory
@@ -18,6 +20,8 @@ class PostList extends Component {
 
   state = {
     category: 'all',
+    postDialogOpen: false,
+    selectedPost: undefined,
   }
 
   /**
@@ -43,6 +47,24 @@ class PostList extends Component {
   }
 
   /**
+   * @description Open the dialog modal to update the post.
+   */
+  openPostDialog = () => {
+    this.setState({
+      postDialogOpen: true,
+    })
+  }
+
+  /**
+   * @description Close the dialog modal after the post submission.
+   */
+  closePostDialog = () => {
+    this.setState({
+      postDialogOpen: false,
+    })
+  }
+
+  /**
    * @description Set the post state to deleted with the API server.
    * @param {string} key - Post ID to delete
    */
@@ -52,20 +74,32 @@ class PostList extends Component {
   }
 
   /**
+   * @description Select the post for edit.
+   * @param {string} key - ID of the post to select
+   */
+  handleEdit = (key) => {
+    this.setState({
+      selectedPost: this.props.posts[key],
+    })
+    this.openPostDialog()
+  }
+
+  /**
    * @description Update the post using the API server.
    * @param {string} key - Post ID to modify content of
    */
-  handleEdit = (key) => {
-    /*
-     *const { posts } = this.props
-     */
+  submitPost = values => {
+    const { form, updatePost } = this.props
+    const post = this.state.selectedPost
+    const newPost = {
+      ...post,
+      title: form.editPost.values.title,
+      body: form.editPost.values.body,
+    }
 
-    /*
-     *this.setState({
-     *  selectedComment: comments[key],
-     *  commentDialogOpen: true,
-     *})
-     */
+    this.setState({ post: newPost })
+    updatePost({ post: newPost })
+    this.closePostDialog()
   }
 
   render() {
@@ -100,6 +134,14 @@ class PostList extends Component {
             />
           )
         }, this)}
+        {this.state.selectedPost &&
+          <EditPostDialog
+            open={this.state.postDialogOpen}
+            postData={this.state.selectedPost}
+            onCancel={this.closePostDialog}
+            onSubmit={this.submitPost}
+          />
+        }
       </div>
     )
   }
@@ -109,9 +151,11 @@ PostList.propTypes = propTypes
 
 const mapStateToProps = state => ({
   posts: state.posts.postsById,
+  form: state.form,
 })
 
 const mapDispatchToProps = dispatch => ({
+  updatePost: (post) => dispatch(updatePost(post)),
   loadPosts: () => dispatch(fetchPosts()),
   loadPostsByCategory: (category) => dispatch(fetchPostsByCategory(category)),
   deletePost: (post) => dispatch(deletePost(post)),
